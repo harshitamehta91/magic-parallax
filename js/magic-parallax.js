@@ -1,13 +1,19 @@
 Parallax = function(){}
 
 Parallax.prototype = {
+	lastScrollY:0 ,
+	ticking:false,
 	parallaxElements: [],
+
 	//
 	//	Initiate
 	//
 	init: function() {
 		var p = this
 		parallaxElements = [] // reset
+		ticking=false
+		lastScrollY=0
+
 		this.sceneSetup()
 		//
 		//	Get all the parallax enabled objects
@@ -18,7 +24,7 @@ Parallax.prototype = {
 			if (obj.dataset.parallax) {
 				obj.parallax({})
 				p.parallaxElements.push(obj)
-				p.magic(obj)
+			//	p.magic(obj)
 			}
 		}
 		//
@@ -37,10 +43,11 @@ Parallax.prototype = {
 				var obj = p.parallaxElements[i]
 				p.magic(obj)
 			}
+			p.ticking=false;
 
-			frame(onFrameUpdate)
+			//frame(onFrameUpdate)
 		}
-		onFrameUpdate()
+	//	onFrameUpdate()
 
 		// window.addEventListener("scroll", function() {
 		// 	var length = p.parallaxElements.length
@@ -49,6 +56,16 @@ Parallax.prototype = {
 		// 		p.magic(obj)
 		// 	}
 		// });
+		window.addEventListener('scroll', onScroll, false);
+		function onScroll(){
+
+			p.lastScrollY = window.scrollY
+			if(!p.ticking) {
+				frame(onFrameUpdate)
+				 p.ticking = true;
+		 }
+		}
+
 	},
 
 	//
@@ -69,11 +86,11 @@ Parallax.prototype = {
 	//
 	magic: function(obj) {
 		var p = this;
-		obj.style.transform = "translateZ(0) " // Attempt at enabling hardware accelleration 
+		obj.style.transform = "translateZ(0) " // Attempt at enabling hardware accelleration
 
 		var parent = obj.parentElement
 		var relativeLocation = -parent.getBoundingClientRect().top
-		
+
 		var tx = 0
 		var ty = 0
 		var tz = 0
@@ -121,7 +138,7 @@ Parallax.prototype = {
 
 		//
 		// TODO: Rotation calculation
-		//  
+		//
 
 		//
 		//	Put it all together
